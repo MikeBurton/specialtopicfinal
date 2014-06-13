@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/iv_ProductImage_Cart"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Product Name:"
+        android:id="@+id/txt_ProductName_Cart"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iv_ProductImage_Cart" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Product Amount:"
+        android:id="@+id/txt_Count_Cart"
+        android:layout_below="@+id/txt_ProductName_Cart"
+        android:layout_toRightOf="@+id/iv_ProductImage_Cart"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Total:"
+        android:id="@+id/txt_DailyRate_Cart"
+        android:layout_below="@+id/txt_Count_Cart"
+        android:layout_toRightOf="@+id/iv_ProductImage_Cart"
+        android:layout_marginTop="15dp"  />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="NoOfDays:"
+        android:id="@+id/txt_NumberOfDays_Cart"
+        android:layout_below="@+id/txt_DailyRate_Cart"
+        android:layout_alignLeft="@+id/txt_DailyRate_Cart"
+        android:layout_alignStart="@+id/txt_DailyRate_Cart"
+        android:layout_marginTop="15dp" />
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/iv_BackIcon_Cart"
+        android:src="@drawable/icon_back"
+        android:layout_alignBottom="@+id/txt_Details_Cart"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Tap to edit details"
+        android:id="@+id/txt_Details_Cart"
+        android:layout_below="@+id/txt_Total_Cart"
+        android:layout_toLeftOf="@+id/iv_BackIcon_Cart" />
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Grand Total:"
+        android:id="@+id/txt_Total_Cart"
+        android:layout_below="@+id/txt_NumberOfDays_Cart"
+        android:layout_alignLeft="@+id/txt_NumberOfDays_Cart"
+        android:layout_alignStart="@+id/txt_Total_Cart" />
+
+
+</RelativeLayout>

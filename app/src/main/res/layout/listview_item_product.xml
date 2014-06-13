@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/item_ivIcon"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Product Name:"
+        android:id="@+id/item_txtProductName"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/item_ivIcon" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Stock Count:"
+        android:id="@+id/item_txtStockCount"
+        android:layout_below="@+id/item_txtProductName"
+        android:layout_toRightOf="@+id/item_ivIcon"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Price:"
+        android:id="@+id/item_txtPrice"
+        android:layout_below="@+id/item_txtStockCount"
+        android:layout_toRightOf="@+id/item_ivIcon"
+        android:layout_marginTop="20dp"  />
+
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/iv_BackIcon_Cart"
+        android:src="@drawable/icon_back"
+        android:layout_alignBottom="@+id/txt_Details_Cart"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Tap to view details"
+        android:id="@+id/txt_Details_Cart"
+        android:layout_below="@+id/item_ivIcon"
+        android:layout_toLeftOf="@+id/iv_BackIcon_Cart" />
+
+</RelativeLayout>

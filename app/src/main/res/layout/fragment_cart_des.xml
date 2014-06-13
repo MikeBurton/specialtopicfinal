@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="205dp"
+                android:layout_height="150dp"
+                android:id="@+id/iv_Icon_CartDes"
+                android:maxHeight="150dp"
+                android:maxWidth="150dp"
+
+                android:src="@drawable/ic_launcher"
+                android:adjustViewBounds="true"
+                android:layout_alignParentTop="true"
+                android:layout_weight="0.24"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Product Name:"
+                android:id="@+id/txt_ProductName_CartDes"
+                android:layout_below="@+id/iv_Icon_CartDes"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Product Amount:"
+                android:id="@+id/txt_Amount_CartDes"
+                android:layout_below="@+id/txt_ProductName_CartDes"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Daily Rate:"
+                android:id="@+id/txt_DailyRate_CartDes"
+                android:layout_below="@+id/txt_Amount_CartDes"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
+
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/np_NoOfDays_CartDes"
+                android:layout_alignTop="@+id/txt_NumberOfDays_CartDes"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:text="Remove Item"
+                android:id="@+id/btn_Remove_CartDes"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/np_NoOfDays_CartDes"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_layout"
+                android:textColor="@color/button_text_layout"/>
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:text="Update"
+                android:id="@+id/btn_NoOfDays_CartDes"
+                android:layout_below="@+id/txt_NumberOfDays_CartDes"
+                android:layout_toRightOf="@+id/np_NoOfDays_CartDes"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/button_layout"
+                android:textColor="@color/button_text_layout"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Number Of Days:"
+                android:id="@+id/txt_NumberOfDays_CartDes"
+                android:layout_below="@+id/txt_DailyRate_CartDes"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>
