@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -153,7 +154,32 @@ public class WebService {
     private String getWebServiceAccessCode() throws Exception {
         return SafeSecurity.createHash(WEB_SERVICE_ACCESS_KEY);
     }
+    private String webUserByEmail(String EMAIL)throws Exception
+    {
+        String USER_BY_EMAIL_RESULT;
+        //encode WEB_SERVICE_ACCESS_KEY
+        String ECODE_URL = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
+        //encode email
+        EMAIL =URLEncoder.encode(EMAIL,"UTF-8");
+        // add URL object
+        URL URL = new URL(WEB_SERVICE_URL + "/GetUserByEmail/"+EMAIL+"?&key=" + ECODE_URL);
+        //open connection to web service
+        URLConnection URL_CONNECTION = URL.openConnection();
+        //set TIMEOUT
+        URL_CONNECTION.setConnectTimeout(TIMEOUT);
+        //read webservice response
+        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
+        //read WEBSERVICE_RESULT to string
+        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
+        //create connection object to store WEBSERVICE_RESULT
+        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
 
+        BUFFERED_READER_RESPONSE.close();
+
+        USER_BY_EMAIL_RESULT = "Success!";
+        return  USER_BY_EMAIL_RESULT;
+
+    }
     private String webLoginRequest(String EMAIL, String PASSWORD) throws Exception {
         String LOGIN_REQUEST_RESULT;
         //hash login details
@@ -365,6 +391,8 @@ public class WebService {
                 URL URL_IMAGES = new URL("http://samshire.azurewebsites.net/Images/" + IMAGE_MAIN.getImageID());
                 Bitmap BITMAP_IMAGE;
                 BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
                 PRODUCT.setImage(BITMAP_IMAGE);
             }
             DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
@@ -839,7 +867,47 @@ public class WebService {
 
 
     }
+    /**
+     * Creates a AsyncTask calls webCategories
+     */
+    public void getUserByEmail(final String EMAIL) {
 
+        if (WEB_SERVICE_EVENT == null) {
+            throw new NullPointerException();
+        }
+
+        CURRENT_ASYNC_TASK = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected void onPreExecute() {
+                WEB_SERVICE_EVENT.WebServiceStartedRequest();
+            }
+
+            ;
+
+            @Override
+            protected String doInBackground(Void... params) {
+                String result = "";
+
+                try {
+                    result = webUserByEmail(EMAIL);
+                } catch (Exception ex) {
+                    return result;
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                WEB_SERVICE_EVENT.WebServiceEndRequest();
+                if (result != "") {
+                    contactWebServiceEventMembers(2, result, "GetUserByEmail", null);
+                } else {
+                    contactWebServiceEventMembers(3, null, null, new Exception("Get User request failed!"));
+                }
+            }
+        }.execute();
+
+    }
     /**
      * Creates a AsyncTask calls webCategories
      */

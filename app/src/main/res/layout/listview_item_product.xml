@@ -12,31 +12,38 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Product Name:"
         android:id="@+id/item_txtProductName"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/item_ivIcon" />
+        android:layout_toRightOf="@+id/item_ivIcon"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Stock Count:"
+        android:text="0 Available "
         android:id="@+id/item_txtStockCount"
+        android:background="#007fff"
+        android:textColor="#ffff"
         android:layout_below="@+id/item_txtProductName"
         android:layout_toRightOf="@+id/item_ivIcon"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Price:"
+        android:background="#2f8912"
+        android:textColor="#ffff"
         android:id="@+id/item_txtPrice"
         android:layout_below="@+id/item_txtStockCount"
         android:layout_toRightOf="@+id/item_ivIcon"
-        android:layout_marginTop="20dp"  />
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
 
 
     <ImageView

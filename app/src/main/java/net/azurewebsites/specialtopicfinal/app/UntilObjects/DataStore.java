@@ -4,6 +4,7 @@ import net.azurewebsites.specialtopicfinal.app.BusinessObjects.CartItem;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Category;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Hire;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Product;
+import net.azurewebsites.specialtopicfinal.app.BusinessObjects.User;
 
 import org.json.JSONObject;
 
@@ -16,13 +17,16 @@ public class DataStore {
     public static int CURRENT_CART_COUNT;
     public static int CURRENT_CATEGORY_ID;
     public static String CURRENT_USER_ID = "mikeburton@live.com";
+    public static User CURRENT_USER = new User();
     public static Product CURRENT_PRODUCT = new Product();
     public static ArrayList<Category> ARRAYLIST_CURRENT_CATEGORIES = new ArrayList<Category>();
     public static ArrayList<Product> ARRAYLIST_CURRENT_PRODUCTS = new ArrayList<Product>();
     public static Hire HIRE_CURRENT_HIRE = new Hire();
     public static ArrayList<CartItem> ARRAYLIST_CURRENT_CARTIEMS = new ArrayList<CartItem>();
+    public static ArrayList<Hire> ARRAYLIST_CURRENT_HIRES = new ArrayList<Hire>();
     public static CartItem CARTITEM_CURRENT = new CartItem();
     public static ArrayList<JSONObject> ARRAYLIST_CACHE_JSON_OBJECTS = new ArrayList<JSONObject>();
+
 
     public static void clearAll() {
         CURRENT_CART_COUNT = 0;

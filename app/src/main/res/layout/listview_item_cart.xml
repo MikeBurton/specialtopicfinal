@@ -13,42 +13,52 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Product Name:"
         android:id="@+id/txt_ProductName_Cart"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/iv_ProductImage_Cart" />
+        android:layout_toRightOf="@+id/iv_ProductImage_Cart"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Product Amount:"
+        android:background="#2f8912"
+        android:textColor="#ffff"
         android:id="@+id/txt_Count_Cart"
         android:layout_below="@+id/txt_ProductName_Cart"
         android:layout_toRightOf="@+id/iv_ProductImage_Cart"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Total:"
+        android:background="#2f8912"
+        android:textColor="#ffff"
         android:id="@+id/txt_DailyRate_Cart"
         android:layout_below="@+id/txt_Count_Cart"
         android:layout_toRightOf="@+id/iv_ProductImage_Cart"
-        android:layout_marginTop="15dp"  />
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="NoOfDays:"
+        android:background="#2f8912"
+        android:textColor="#ffff"
         android:id="@+id/txt_NumberOfDays_Cart"
         android:layout_below="@+id/txt_DailyRate_Cart"
         android:layout_alignLeft="@+id/txt_DailyRate_Cart"
         android:layout_alignStart="@+id/txt_DailyRate_Cart"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="1dp"/>
 
     <ImageView
         android:layout_width="25dp"
@@ -75,6 +85,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Grand Total:"
+        android:background="#2f8912"
+        android:textColor="#ffff"
         android:id="@+id/txt_Total_Cart"
         android:layout_below="@+id/txt_NumberOfDays_Cart"
         android:layout_alignLeft="@+id/txt_NumberOfDays_Cart"

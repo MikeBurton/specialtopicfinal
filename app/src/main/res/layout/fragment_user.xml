@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -10,13 +10,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:layout_width="205dp"
-                android:layout_height="150dp"
-                android:id="@+id/proDes_ivIcon"
-                android:maxHeight="150dp"
-                android:maxWidth="150dp"
-
-                android:src="@drawable/ic_launcher"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/iv_icon_user"
+                android:maxHeight="100dp"
+                android:maxWidth="100dp"
+                android:background="@android:color/black"
+                android:src="@drawable/ic_user"
                 android:adjustViewBounds="true"
                 android:layout_alignParentTop="true"
                 android:layout_weight="0.24"
@@ -24,14 +24,24 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="User Details "
+                android:id="@+id/txt_title_user"
+                android:layout_below="@+id/iv_icon_user"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Product Name:"
-                android:id="@+id/proDes_txtProductName"
-                android:layout_below="@+id/proDes_ivIcon"
+                android:text="Name: "
+                android:id="@+id/txt_name_user"
+                android:layout_below="@+id/txt_title_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="20dp"
@@ -41,59 +51,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Product Price"
-                android:background="#2f8912"
-                android:textColor="#ffff"
-                android:id="@+id/proDes_txtProductPrice"
-                android:layout_below="@+id/proDes_txtProductName"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Product Stock"
-
-                android:background="#007fff"
-                android:textColor="#ffff"
-                android:id="@+id/proDes_txtProductStock"
-                android:layout_below="@+id/proDes_txtProductPrice"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Product Des"
-                android:id="@+id/proDes_txtProductDescription"
-                android:layout_below="@+id/proDes_txtProductStock"
+                android:text="Email: "
+                android:id="@+id/txt_email_user"
+                android:layout_below="@+id/txt_name_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="10dp"/>
 
             <Button
-                android:layout_width="120dp"
-                android:layout_height="50dp"
-                android:text="Add to cart"
-                android:id="@+id/proDes_btnAddToCart"
-                android:layout_below="@+id/proDes_txtProductDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  My Orders  "
+                android:id="@+id/btn_hires_user"
+                android:layout_below="@+id/txt_email_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/button_layout"
                 android:textColor="@color/button_text_layout"/>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView"
+                android:layout_below="@+id/btn_hires_user"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"/>
+
+
         </RelativeLayout>
     </ScrollView>
-
-
 
 
 </RelativeLayout>

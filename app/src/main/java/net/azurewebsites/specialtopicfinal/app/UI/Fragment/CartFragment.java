@@ -72,7 +72,7 @@ public class CartFragment extends Fragment implements  AdapterView.OnItemClickLi
 
        cart.setOnItemClickListener(this);
         checkout.setOnClickListener(buttonAddOnClickListener);
-       grandTotal.setText("Grand Total: $"+getGrandTotal());
+       grandTotal.setText(" Grand Total: $"+getGrandTotal()+ " ");
     }
     /*
   * Button listener

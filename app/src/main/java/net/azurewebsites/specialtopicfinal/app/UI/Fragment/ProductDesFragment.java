@@ -55,8 +55,8 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
         txtProductStock = (TextView) mainActivity.findViewById(R.id.proDes_txtProductStock);
         TextView txtProductDescription = (TextView) mainActivity.findViewById(R.id.proDes_txtProductDescription);
         txtProductName.setText("Product Name: "+ DataStore.CURRENT_PRODUCT.getName());
-        txtProductPrice.setText("Price: $"+DataStore.CURRENT_PRODUCT.getPrice());
-        txtProductStock.setText("Stock: "+DataStore.CURRENT_PRODUCT.getStockCount());
+        txtProductPrice.setText(" $"+DataStore.CURRENT_PRODUCT.getPrice()+" ");
+        txtProductStock.setText(" "+DataStore.CURRENT_PRODUCT.getStockCount()+" Available ");
         txtProductDescription.setText("Product Description: "+DataStore.CURRENT_PRODUCT.getDescription());
         btnAddToCart = (Button) mainActivity.findViewById(R.id.proDes_btnAddToCart);
         btnAddToCart.setOnClickListener(buttonAddOnClickListener);
@@ -144,7 +144,7 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
             int count = DataStore.CURRENT_PRODUCT.getStockCount();
             count -= 1;
             DataStore.CURRENT_PRODUCT.setStockCount(count);
-            txtProductStock.setText("Stock: "+DataStore.CURRENT_PRODUCT.getStockCount());
+            txtProductStock.setText(" "+DataStore.CURRENT_PRODUCT.getStockCount()+" Available ");
         }
     }
     Button.OnClickListener buttonAddOnClickListener  = new Button.OnClickListener(){

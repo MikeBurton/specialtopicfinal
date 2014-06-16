@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Hire ID:"
+        android:id="@+id/txt_hireid_user"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Total Products Hired:"
+        android:id="@+id/txt_totalProducts_user"
+        android:layout_below="@+id/txt_hireid_user"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Grand Total:"
+        android:id="@+id/txt_DailyRate_Cart"
+        android:layout_below="@+id/txt_totalProducts_user"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"/>
+
+
+</RelativeLayout>

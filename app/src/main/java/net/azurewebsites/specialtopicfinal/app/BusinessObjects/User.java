@@ -64,7 +64,7 @@ public class User
     public void setHires(ArrayList<Hire> hires) {
         this.hires = hires;
     }
-
+    public User(){}
     public User(String userName, String password, String firstName, String lastName, String type, String email, String phone, ArrayList<Address> addresses, ArrayList<Hire> hires)
     {
         this.UserName = userName;

@@ -14,8 +14,7 @@ import microsoft.aspnet.signalr.client.hubs.HubProxy;
  */
 public class SignalR {
 
-    public HubConnection conn;
-    public HubProxy proxy;
+
     MainActivity activity;
     //Test Code
     // Create a new console logger
@@ -105,8 +104,6 @@ public class SignalR {
 
     }
 
-    public void stopConnection() {
-        conn.stop();
-    }
+
 
 }

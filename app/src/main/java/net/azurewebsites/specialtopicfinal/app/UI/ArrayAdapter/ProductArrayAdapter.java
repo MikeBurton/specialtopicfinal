@@ -21,6 +21,7 @@ import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
 
 import org.json.*;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
@@ -70,10 +71,11 @@ public class ProductArrayAdapter extends ArrayAdapter<Product> {
         {
             image = currentProduct.getImage();
         }
+        DecimalFormat df = new DecimalFormat("#.##");
         imageView.setImageBitmap(image);
         txtProductName.setText(currentProduct.getName());
-        txtPrice.setText("Price: $"+currentProduct.getPrice());
-        txtStock.setText("Stock Count: "+currentProduct.getStockCount());
+        txtPrice.setText(" $"+df.format(currentProduct.getPrice())+" ");
+        txtStock.setText(" "+currentProduct.getStockCount()+" Available ");
         return itemView;
     }
     public void updateStock(String jsonString)throws Exception
@@ -94,7 +96,8 @@ public class ProductArrayAdapter extends ArrayAdapter<Product> {
                     if (view != null)
                     {
                         TextView txtStockCount = (TextView) view.findViewById(R.id.item_txtStockCount);
-                        txtStockCount.setText("Stock Count: " + updateProducts.getInt("StockCount"));
+                        txtStockCount.setText(" "+updateProducts.getInt("StockCount")+" Available ");
+
                     }
                 }
             }
