@@ -20,11 +20,13 @@ import net.azurewebsites.specialtopicfinal.app.R;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.CartArrayAdapter;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.CategoryArrayAdapter;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.ProductArrayAdapter;
+import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.UserArrayAdapter;
 import net.azurewebsites.specialtopicfinal.app.UI.Fragment.CartDesFragment;
 import net.azurewebsites.specialtopicfinal.app.UI.Fragment.CartFragment;
 import net.azurewebsites.specialtopicfinal.app.UI.Fragment.CategoryFragment;
 import net.azurewebsites.specialtopicfinal.app.UI.Fragment.ProductDesFragment;
 import net.azurewebsites.specialtopicfinal.app.UI.Fragment.ProductFragment;
+import net.azurewebsites.specialtopicfinal.app.UI.Fragment.UserFragment;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.SignalR;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebService;
@@ -224,7 +226,20 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
 
     public void getUserFragment()
     {
+        UserArrayAdapter userArrayAdapter = new UserArrayAdapter(this,R.layout.listview_item_user,DataStore.ARRAYLIST_CURRENT_HIRES);
+        UserFragment userFragment = new UserFragment();
 
+        if (this.SAVED_STATE == null) {
+            userFragment.setMainActivity(this);
+            userFragment.setUserArrayAdapter(userArrayAdapter);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.listContainer, userFragment)
+                            // Add this transaction to the back stack
+                    .addToBackStack(null)
+                    .commit();
+        }
+        ACTION_BAR.setDisplayHomeAsUpEnabled(true);
+        FRAGMENT_ID = 6;
     }
     public void getCartDesFragment()
     {
@@ -383,6 +398,20 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
                 return true;
             case 5:
                 getCartFragment();
+                return true;
+            case 6:
+                switch (CURRENT_FRAGMENT_ID)
+                {
+                    case 1:
+                        getCategoryFragment(true);
+                        return true;
+                    case 2:
+                        getProductFragment();
+                        return true;
+                    case 3:
+                        getProductDescriptionFragment();
+                        return true;
+                }
                 return true;
         }
         return true;

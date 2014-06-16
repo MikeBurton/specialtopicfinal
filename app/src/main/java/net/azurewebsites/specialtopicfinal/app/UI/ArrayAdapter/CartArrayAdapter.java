@@ -17,6 +17,7 @@ import net.azurewebsites.specialtopicfinal.app.R;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.Util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -60,12 +61,13 @@ public class CartArrayAdapter extends ArrayAdapter<CartItem> {
         {
             image = cartItem.getProduct().getImage();
         }
+        DecimalFormat df = new DecimalFormat("#.##");
         imageView.setImageBitmap(image);
         txtProductName.setText(cartItem.getProduct().getName());
-        txtProductCount.setText("Amount: "+cartItem.getAmount());
-        txtDailyRate.setText("Per Day: $" + productPrice);
-        txtTotal.setText("Total: $"+total);
-        txtNoOfDays.setText("NoOfDays: "+numOfDays);
+        txtProductCount.setText("Amount: "+cartItem.getAmount()+ " ");
+        txtDailyRate.setText("Per Day: $" + df.format(productPrice)+" ");
+        txtTotal.setText("Total: $"+df.format(total)+ " ");
+        txtNoOfDays.setText("NoOfDays: "+numOfDays +" ");
         return itemView;
     }
 }
