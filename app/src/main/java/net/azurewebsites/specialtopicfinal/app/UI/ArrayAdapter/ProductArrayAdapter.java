@@ -78,6 +78,12 @@ public class ProductArrayAdapter extends ArrayAdapter<Product> {
         txtStock.setText(" "+currentProduct.getStockCount()+" Available ");
         return itemView;
     }
+
+    /**
+     * Is used to update stock count from signalR
+     * @param jsonString json string
+     * @throws Exception
+     */
     public void updateStock(String jsonString)throws Exception
     {
         JSONObject jsonObject = new JSONObject(jsonString);

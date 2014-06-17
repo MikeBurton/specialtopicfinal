@@ -110,7 +110,9 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
 
     }
 
-
+    /**
+     * Makes sure user can't add a product to cart when there is no stock available
+     */
     private void checkButton()
     {
         int productCount = 0;

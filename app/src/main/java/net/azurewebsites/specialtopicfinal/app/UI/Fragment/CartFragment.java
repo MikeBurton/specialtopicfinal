@@ -76,7 +76,7 @@ public class CartFragment extends Fragment implements  AdapterView.OnItemClickLi
     }
     /*
   * Button listener
-  * Handles all the on click events for the login MAIN_ACTIVITY
+  * Handles all the on click events for the cart fragment
   * */
     Button.OnClickListener buttonAddOnClickListener  = new Button.OnClickListener(){
         @Override

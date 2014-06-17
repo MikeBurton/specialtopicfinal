@@ -32,6 +32,10 @@ public class SignalR {
         this.activity = activity;
     }
 
+    /**
+     * Connects to product hub
+     *  Overrides public void onMessageReceived(JsonElement json) which is used to update stock levels on the UI thread
+     */
     public void signalRConnection() {
 
         // Connect to the server

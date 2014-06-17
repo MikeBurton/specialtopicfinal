@@ -96,6 +96,10 @@ public class CartDesFragment extends Fragment implements WebServiceEvents
             }
         }
     };
+
+    /**
+     * Updates the end date of a selected product already added to the cart
+     */
     public void updateEndDate()
     {
         if (!mainActivity.isNetworkAvailable())
@@ -117,6 +121,10 @@ public class CartDesFragment extends Fragment implements WebServiceEvents
 
         mainActivity.getWebService().changeHireDetailEndDate(DataStore.CARTITEM_CURRENT.getHireDetailID(), DataStore.CARTITEM_CURRENT.getEndDate());
     }
+
+    /**
+     * Removes a product from the cart
+     */
     public void removeItem()
     {
         if (!mainActivity.isNetworkAvailable())

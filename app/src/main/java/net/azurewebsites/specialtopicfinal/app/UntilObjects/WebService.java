@@ -148,6 +148,76 @@ public class WebService {
     }
 
     /**
+     * Connects to webservice and returns json object
+     * @param url RESTful URL String (e.g. WEB_SERVICE_URL + "/GetUserByEmail/"+EMAIL+"?&key=" + ECODE_URL)
+     * @return returns json object
+     * @throws Exception
+     */
+    private JSONObject connectWebservice(String url) throws Exception
+    {
+
+        URL URL = new URL(url);
+        //open connection to web service
+        URLConnection URL_CONNECTION = URL.openConnection();
+        //set TIMEOUT
+        URL_CONNECTION.setConnectTimeout(TIMEOUT);
+        //read webservice response
+        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
+        //read WEBSERVICE_RESULT to string
+        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
+        //create connection object to store WEBSERVICE_RESULT
+        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //close reader
+        BUFFERED_READER_RESPONSE.close();
+        return JSON_OBJECT_RESPONSE;
+    }
+
+    /**
+     * Loads products into the Datastore and gets all the images (compresses them) from the website
+     * @param JSON_ARRAY_RESPONSE requires json array
+     * @throws Exception
+     */
+    private void loadProducts(JSONArray JSON_ARRAY_RESPONSE) throws Exception
+    {
+        //clear current products
+        DataStore.ARRAYLIST_CURRENT_PRODUCTS.clear();
+        //loop through  array
+        for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
+            JSONObject JSON_OBJECT_PRODUCT = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
+            JSONArray images = JSON_OBJECT_PRODUCT.getJSONArray("Images");
+            ArrayList<Image> ARRAYLIST_IMAGES = new ArrayList<Image>();
+            for (int in = 0; in < images.length(); in++) {
+                JSONObject JSON_OBJECT_IMAGE = (JSONObject) images.get(in);
+                Image IMAGE = new Image(JSON_OBJECT_IMAGE.getString("ImageID"), JSON_OBJECT_IMAGE.getBoolean("IsDefault"), JSON_OBJECT_IMAGE.getInt("ProductID"));
+                ARRAYLIST_IMAGES.add(IMAGE);
+            }
+            int PARENT_PRODUCT_ID;
+            if (JSON_OBJECT_PRODUCT.isNull("ParentProductID") == true) {
+                PARENT_PRODUCT_ID = 0;
+            } else {
+                PARENT_PRODUCT_ID = JSON_OBJECT_PRODUCT.getInt("ParentProductID");
+            }
+
+            Product PRODUCT = new Product(JSON_OBJECT_PRODUCT.getInt("ProductID"), JSON_OBJECT_PRODUCT.getInt("CategoryID"), JSON_OBJECT_PRODUCT.getString("Description"), JSON_OBJECT_PRODUCT.getBoolean("IsCurrent"), JSON_OBJECT_PRODUCT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT_PRODUCT.getDouble("Price"), JSON_OBJECT_PRODUCT.getInt("StockCount"), ARRAYLIST_IMAGES);
+            Image IMAGE_MAIN = new Image();
+            for (Image IMAGE : PRODUCT.getImages()) {
+                if (IMAGE.isDefault()) {
+                    IMAGE_MAIN = IMAGE;
+                }
+
+            }
+            if (IMAGE_MAIN.getImageID().length() > 0) {
+                URL URL_IMAGES = new URL("http://samshire.azurewebsites.net/Images/" + IMAGE_MAIN.getImageID());
+                Bitmap BITMAP_IMAGE;
+                BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
+                PRODUCT.setImage(Bitmap.createScaledBitmap(BITMAP_IMAGE,120,120,false));
+            }
+            DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
+        }
+    }
+    /**
      * Returns hashed WEB_SERVICE_ACCESS_KEY, Uses SafeSecurity
      * @return hashed WEB_SERVICE_ACCESS_KEY
      * @throws Exception
@@ -161,24 +231,12 @@ public class WebService {
         //encode WEB_SERVICE_ACCESS_KEY
         String ECODE_URL = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
         //encode email
-        EMAIL =URLEncoder.encode(EMAIL,"UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetUserByEmail/"+EMAIL+"?&key=" + ECODE_URL);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //set TIMEOUT
-        URL_CONNECTION.setConnectTimeout(TIMEOUT);
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create connection object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        EMAIL = URLEncoder.encode(EMAIL,"UTF-8");
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetUserByEmail/"+EMAIL+"?&key=" + ECODE_URL);
         JSONObject JSON_OBJECT_RESULT = JSON_OBJECT_RESPONSE.getJSONObject("GetUserByEmailResult");
         User user = new User(JSON_OBJECT_RESULT.getString("Email"),JSON_OBJECT_RESULT.getString("FirstName"),JSON_OBJECT_RESULT.getString("LastName"));
         DataStore.CURRENT_USER = user;
-        BUFFERED_READER_RESPONSE.close();
-
         USER_BY_EMAIL_RESULT = "Success!";
         return  USER_BY_EMAIL_RESULT;
 
@@ -200,24 +258,11 @@ public class WebService {
         String ENCODED_URL_STRING_UTF8 = URLEncoder.encode(ENCRYPTED_REQUEST, "UTF-8");
         //encode WEB_SERVICE_ACCESS_KEY
         String ENCODE_ACCESS_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/Login?userData=" + ENCODED_URL_STRING_UTF8 + "&key=" + ENCODE_ACCESS_KEY_UTF8);
-        //open URL to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //set TIMEOUT
-        URL_CONNECTION.setConnectTimeout(TIMEOUT);
-        //read webservice response
-        BufferedReader BUFFERED_READER_FOR_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_FOR_RESPONSE.readLine();
-        //create JSON_OBJECT object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/Login?userData=" + ENCODED_URL_STRING_UTF8 + "&key=" + ENCODE_ACCESS_KEY_UTF8);
         String RESPONSE_TO_DECRYPT = JSON_OBJECT_RESPONSE.getString("LoginResult");
         //decrypt response
         LOGIN_REQUEST_RESULT = SafeSecurity.decrypt(RESPONSE_TO_DECRYPT);
-        //close BUFFERED_READER_FOR_RESPONSE
-        BUFFERED_READER_FOR_RESPONSE.close();
-
         return LOGIN_REQUEST_RESULT;
     }
 
@@ -230,18 +275,8 @@ public class WebService {
         String CATEGORY_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ECODE_URL = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetCategories?&key=" + ECODE_URL);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //set TIMEOUT
-        URL_CONNECTION.setConnectTimeout(TIMEOUT);
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create connection object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetCategories?&key=" + ECODE_URL);
         //convert connection object into connection array
         JSONArray JSON_ARRAY_CATEGORY_RESULT = JSON_OBJECT_RESPONSE.getJSONArray("GetCategoriesResult");
         //loop through connection array
@@ -252,7 +287,7 @@ public class WebService {
             DataStore.ARRAYLIST_CURRENT_CATEGORIES.add(CATEGORY);
         }
         CATEGORY_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
+
         return CATEGORY_RESULT;
     }
 
@@ -264,16 +299,8 @@ public class WebService {
      */
     private String webProductByID(int PRODUCT_ID) throws Exception {
         String PRODUCT_BY_ID_RESULT;
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetProductByID/" + "" + PRODUCT_ID);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String line = BUFFERED_READER_RESPONSE.readLine();
-        //create URL object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(line);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetProductByID/" + "" + PRODUCT_ID);
         //load JSON_OBJECT_RESPONSE into a JSON object, to access JSON_ARRAY_IMAGES array (Couldn't access it in JSON_OBJECT_RESPONSE,simple solution was what I came up with below making a new JSON object by using JSON_OBJECT_RESPONSE.getJSONObject )
         JSONObject JSON_OBJECT_RESULT = JSON_OBJECT_RESPONSE.getJSONObject("GetProductByIDResult");
         //loop through JSON_ARRAY_IMAGES array
@@ -293,7 +320,7 @@ public class WebService {
         Product PRODUCT = new Product(JSON_OBJECT_RESULT.getInt("ProductID"), JSON_OBJECT_RESULT.getInt("CategoryID"), JSON_OBJECT_RESULT.getString("Description"), JSON_OBJECT_RESULT.getBoolean("IsCurrent"), JSON_OBJECT_RESULT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT_RESULT.getDouble("Price"), JSON_OBJECT_RESULT.getInt("StockCount"), myImages);
         DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
         PRODUCT_BY_ID_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
+
         return PRODUCT_BY_ID_RESULT;
     }
     /**
@@ -309,16 +336,8 @@ public class WebService {
         String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
         EMAIL = SafeSecurity.encrypt(EMAIL);
         EMAIL = URLEncoder.encode(EMAIL, "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetHiresByEmail?eemail=" + EMAIL + "&key=" + ENCODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create json object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetHiresByEmail?eemail=" + EMAIL + "&key=" + ENCODE_KEY_UTF8);
         //convert json object into json array
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("GetHiresByEmailResult");
         //loop through  array
@@ -334,9 +353,6 @@ public class WebService {
             Hire HIRE = new Hire(HIREID,JSON_OBJECT_HIRE.getDouble("GrandTotal"), JSON_OBJECT_HIRE.getString("Email"));
             DataStore.ARRAYLIST_CURRENT_HIRES.add(HIRE);
         }
-        BUFFERED_READER_RESPONSE.close();
-
-
         HIRES_BY_EMAIL = "!Success";
         return HIRES_BY_EMAIL;
 
@@ -351,56 +367,13 @@ public class WebService {
         String PRODUCTS_BY_SEARCH_STRING_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ECODE_URL = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetProductsBySearchString/"+SEARCH_STRING+"?key="+ECODE_URL);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create JSON object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
-        //convert JSON object into JSON array
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetProductsBySearchString/"+SEARCH_STRING+"?key="+ECODE_URL);
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("GetProductsBySearchStringResult");
-        //clear current products
-        DataStore.ARRAYLIST_CURRENT_PRODUCTS.clear();
-        //loop through  array
-        for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
-            JSONObject JSON_OBJECT_PRODUCT = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
-            JSONArray images = JSON_OBJECT_PRODUCT.getJSONArray("Images");
-            ArrayList<Image> ARRAYLIST_IMAGES = new ArrayList<Image>();
-            for (int in = 0; in < images.length(); in++) {
-                JSONObject JSON_OBJECT_IMAGE = (JSONObject) images.get(in);
-                Image IMAGE = new Image(JSON_OBJECT_IMAGE.getString("ImageID"), JSON_OBJECT_IMAGE.getBoolean("IsDefault"), JSON_OBJECT_IMAGE.getInt("ProductID"));
-                ARRAYLIST_IMAGES.add(IMAGE);
-            }
-            int PARENT_PRODUCT_ID;
-            if (JSON_OBJECT_PRODUCT.isNull("ParentProductID") == true) {
-                PARENT_PRODUCT_ID = 0;
-            } else {
-                PARENT_PRODUCT_ID = JSON_OBJECT_PRODUCT.getInt("ParentProductID");
-            }
 
-            Product PRODUCT = new Product(JSON_OBJECT_PRODUCT.getInt("ProductID"), JSON_OBJECT_PRODUCT.getInt("CategoryID"), JSON_OBJECT_PRODUCT.getString("Description"), JSON_OBJECT_PRODUCT.getBoolean("IsCurrent"), JSON_OBJECT_PRODUCT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT_PRODUCT.getDouble("Price"), JSON_OBJECT_PRODUCT.getInt("StockCount"), ARRAYLIST_IMAGES);
-            Image IMAGE_MAIN = new Image();
-            for (Image IMAGE : PRODUCT.getImages()) {
-                if (IMAGE.isDefault()) {
-                    IMAGE_MAIN = IMAGE;
-                }
-
-            }
-            if (IMAGE_MAIN.getImageID().length() > 0) {
-                URL URL_IMAGES = new URL("http://samshire.azurewebsites.net/Images/" + IMAGE_MAIN.getImageID());
-                Bitmap BITMAP_IMAGE;
-                BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
-                PRODUCT.setImage(Bitmap.createScaledBitmap(BITMAP_IMAGE,120,120,false));
-            }
-            DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
-        }
+        //load products
+        loadProducts(JSON_ARRAY_RESPONSE);
         PRODUCTS_BY_SEARCH_STRING_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
 
         return PRODUCTS_BY_SEARCH_STRING_RESULT;
     }
@@ -415,59 +388,12 @@ public class WebService {
         String PRODUCTS_BY_CATEGORY_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetProductsByCategoryID/" + CATEGORY_ID + "?&key=" + ENCODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create json object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
-        //convert json object into json array
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/GetProductsByCategoryID/" + CATEGORY_ID + "?&key=" + ENCODE_KEY_UTF8);
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("GetProductsByCategoryIDResult");
-        //clear current products
-        DataStore.ARRAYLIST_CURRENT_PRODUCTS.clear();
-        //loop through  array
-        for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
-            JSONObject JSON_OBJECT_PRODUCT = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
-            JSONArray images = JSON_OBJECT_PRODUCT.getJSONArray("Images");
-            ArrayList<Image> ARRAYLIST_IMAGES = new ArrayList<Image>();
-            for (int in = 0; in < images.length(); in++) {
-                JSONObject JSON_OBJECT_IMAGE = (JSONObject) images.get(in);
-                Image IMAGE = new Image(JSON_OBJECT_IMAGE.getString("ImageID"), JSON_OBJECT_IMAGE.getBoolean("IsDefault"), JSON_OBJECT_IMAGE.getInt("ProductID"));
-                ARRAYLIST_IMAGES.add(IMAGE);
-            }
-            int PARENT_PRODUCT_ID;
-            if (JSON_OBJECT_PRODUCT.isNull("ParentProductID") == true) {
-                PARENT_PRODUCT_ID = 0;
-            } else {
-                PARENT_PRODUCT_ID = JSON_OBJECT_PRODUCT.getInt("ParentProductID");
-            }
-
-            Product PRODUCT = new Product(JSON_OBJECT_PRODUCT.getInt("ProductID"), JSON_OBJECT_PRODUCT.getInt("CategoryID"), JSON_OBJECT_PRODUCT.getString("Description"), JSON_OBJECT_PRODUCT.getBoolean("IsCurrent"), JSON_OBJECT_PRODUCT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT_PRODUCT.getDouble("Price"), JSON_OBJECT_PRODUCT.getInt("StockCount"), ARRAYLIST_IMAGES);
-            Image IMAGE_MAIN = new Image();
-            for (Image IMAGE : PRODUCT.getImages()) {
-                if (IMAGE.isDefault()) {
-                    IMAGE_MAIN = IMAGE;
-                }
-
-            }
-            if (IMAGE_MAIN.getImageID().length() > 0) {
-                URL URL_IMAGES = new URL("http://samshire.azurewebsites.net/Images/" + IMAGE_MAIN.getImageID());
-                Bitmap BITMAP_IMAGE;
-                BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
-
-                PRODUCT.setImage(Bitmap.createScaledBitmap(BITMAP_IMAGE,120,120,false));
-            }
-            DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
-        }
+        //load products
+        loadProducts(JSON_ARRAY_RESPONSE);
         PRODUCTS_BY_CATEGORY_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
-
         return PRODUCTS_BY_CATEGORY_RESULT;
     }
 
@@ -483,21 +409,9 @@ public class WebService {
         //encode WEB_SERVICE_ACCESS_KEY
         String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
         java.util.Date DATE_TODAY = new java.util.Date();
-
         Date SQLDATE_TODAY = new Date(DATE_TODAY.getTime());
-
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/AddProductToCart/" + HIRE_ID + "/" + PRODUCT_ID + "/" + DataStore.CURRENT_USER_ID + "/" + SQLDATE_TODAY.toString() + "/" + SQLDATE_TODAY.toString() + "?&key=" + ENCODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //set TIMEOUT
-        URL_CONNECTION.setConnectTimeout(TIMEOUT);
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create connection object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/AddProductToCart/" + HIRE_ID + "/" + PRODUCT_ID + "/" + DataStore.CURRENT_USER_ID + "/" + SQLDATE_TODAY.toString() + "/" + SQLDATE_TODAY.toString() + "?&key=" + ENCODE_KEY_UTF8);
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("AddProductToCartResult");
         int CART_COUNT = JSON_ARRAY_RESPONSE.getInt(1);
         int CURRENT_HIRE_ID = JSON_ARRAY_RESPONSE.getInt(0);
@@ -521,10 +435,8 @@ public class WebService {
         }
         CartItem CARTITEM_CURRENT = new CartItem(PRODUCT_ID, DataStore.HIRE_CURRENT_HIRE.getHireID(), CURRENT_HIREDETAIL_ID, PRODUCT_CURRENT, 1, SQLDATE_TODAY, SQLDATE_TODAY);
         DataStore.ARRAYLIST_CURRENT_CARTIEMS.add(CARTITEM_CURRENT);
-
         DataStore.HIRE_CURRENT_HIRE.getHireDetails().add(HIREDETAIL);
         ADD_PRODUCT_TO_CART_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
         return ADD_PRODUCT_TO_CART_RESULT;
 
     }
@@ -540,19 +452,10 @@ public class WebService {
         String CHANGE_HIRE_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ECODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/ChangeHireDetailEndDate/" + HIREDETAIL_ID + "/" + DATE_ENDDATE.toString() + "?&key=" + ECODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String line = BUFFERED_READER_RESPONSE.readLine();
-        //create json object to store WEBSERVICE_RESULT
-        JSONObject jsonResponse = new JSONObject(line);
-        DataStore.ARRAYLIST_CACHE_JSON_OBJECTS.add(jsonResponse);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/ChangeHireDetailEndDate/" + HIREDETAIL_ID + "/" + DATE_ENDDATE.toString() + "?&key=" + ECODE_KEY_UTF8);
+        DataStore.ARRAYLIST_CACHE_JSON_OBJECTS.add(JSON_OBJECT_RESPONSE);
         CHANGE_HIRE_RESULT = "Success!";
-        BUFFERED_READER_RESPONSE.close();
         return CHANGE_HIRE_RESULT;
     }
 
@@ -566,16 +469,8 @@ public class WebService {
         String REMOVE_PRODUCT_FROM_CART_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/RemoveProductFromCart/" + hireDetailID + "?&key=" + ENCODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
-        //create json object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/RemoveProductFromCart/" + hireDetailID + "?&key=" + ENCODE_KEY_UTF8);
         //convert json object into json array
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("RemoveProductFromCartResult");
         DataStore.CURRENT_CART_COUNT = JSON_ARRAY_RESPONSE.getInt(0); //changes cart count
@@ -593,16 +488,8 @@ public class WebService {
         String CHECK_OUT_RESULT;
         //encode WEB_SERVICE_ACCESS_KEY
         String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
-        // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/Checkout/" + HIRE_ID + "?&key=" + ENCODE_KEY_UTF8);
-        //open connection to web service
-        URLConnection URL_CONNECTION = URL.openConnection();
-        //read webservice response
-        BufferedReader BUFFERED_READER_RESULT = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
-        //read WEBSERVICE_RESULT to string
-        String RESPONSE_STRING = BUFFERED_READER_RESULT.readLine();
-        //create json object to store WEBSERVICE_RESULT
-        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //connect to web service and get response
+        JSONObject JSON_OBJECT_RESPONSE = connectWebservice(WEB_SERVICE_URL + "/Checkout/" + HIRE_ID + "?&key=" + ENCODE_KEY_UTF8);
         //convert json object into json array
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("CheckoutResult");
         for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
@@ -615,7 +502,7 @@ public class WebService {
 
             }
         }
-        CHECK_OUT_RESULT = RESPONSE_STRING;
+        CHECK_OUT_RESULT = "!Success";
         return CHECK_OUT_RESULT;
     }
 
