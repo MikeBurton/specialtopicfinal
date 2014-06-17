@@ -48,8 +48,15 @@ public class ProductFragment extends ListFragment implements AdapterView.OnItemC
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+        arrayAdapter.notifyDataSetChanged();
         setListAdapter(arrayAdapter);
+        getListView().invalidateViews();
         getListView().setOnItemClickListener(this);
     }
-
+    public void refresh(){
+        arrayAdapter.notifyDataSetChanged();
+        setListAdapter(arrayAdapter);
+        getListView().invalidateViews();
+    }
 }

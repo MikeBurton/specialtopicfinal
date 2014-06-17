@@ -330,10 +330,11 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
     /**
      * Creates Product fragment
      */
+    ProductFragment  productFragment;
     public void getProductFragment()
     {
        PRODUCT_ARRAY_ADAPTER = new ProductArrayAdapter(this,R.layout.listview_item_product,DataStore.ARRAYLIST_CURRENT_PRODUCTS);
-          ProductFragment  productFragment = new ProductFragment();
+           productFragment = new ProductFragment();
 
 
                 productFragment.setArrayAdapter(PRODUCT_ARRAY_ADAPTER);
@@ -530,6 +531,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
                 public void run() {
                     try {
                         PRODUCT_ARRAY_ADAPTER.updateStock(jsonResponse);
+                       // productFragment.refresh();
                     }catch (Exception ex)
                     {
                         System.out.println(ex.toString());

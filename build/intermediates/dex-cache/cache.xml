@@ -2,28 +2,28 @@
 <pre-dex-items>
 
     <item
-        dex="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\signalr-client-sdk-android-e8d4e26368b31d24712311b5d1e71404cf5429ec.jar"
-        jar="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\signalr-client-sdk-android.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="a6417809c26c61a7e208100f8284c1acdc398428"/>
-    <item
-        dex="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\gson-2.2.2-4ef3eba96c1ffb018681801c911546a5cee8fd6e.jar"
-        jar="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\gson-2.2.2.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="53bfcd3c8e310d1493b2691484525ed90b04e236"/>
-    <item
-        dex="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\android-support-v4-d2082d8d9c144a084691fbc6a0bc0efaa5d958a2.jar"
-        jar="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\android-support-v4.jar"
+        dex="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\android-support-v4-7ae574ba957afa149c75911e9663c140521692b4.jar"
+        jar="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\android-support-v4.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="fc834ac8147bc4ed0b555f90f500a57d4232c448"/>
     <item
-        dex="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\signalr-client-sdk-ee71d4a367bc13984be4539e8e22b294c8c888c3.jar"
-        jar="H:\Google &amp; Dropbox\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\signalr-client-sdk.jar"
+        dex="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\gson-2.2.2-006c73ca1fa59ea273a931d08d63134aa178b80d.jar"
+        jar="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\gson-2.2.2.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="53bfcd3c8e310d1493b2691484525ed90b04e236"/>
+    <item
+        dex="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\signalr-client-sdk-b5f9effaec53f5d25e4837f64f50c0153ebfdbc8.jar"
+        jar="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\signalr-client-sdk.jar"
         jumboMode="false"
         revision="19.1.0"
         sha1="a9ae02bd1a15497aa9222498ae7c6b27a53fa41f"/>
+    <item
+        dex="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\build\intermediates\pre-dexed\debug\signalr-client-sdk-android-8b88c085c62a83c8bb0d27afa99f3052b97ab39b.jar"
+        jar="C:\Users\Mike\Dropbox\Mike\Development\Programming\Android\AndroidStudio\specialtopicfinal\app\libs\signalr-client-sdk-android.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="a6417809c26c61a7e208100f8284c1acdc398428"/>
 
 </pre-dex-items>

@@ -24,7 +24,7 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
     Button btnAddToCart;
     TextView txtProductStock;
     MainActivity mainActivity;
-
+    Boolean isStock = false;
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
@@ -127,15 +127,15 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
        }
         if (productCount == DataStore.CURRENT_PRODUCT.getStockCount())
         {
-            btnAddToCart.setEnabled(false);
+            isStock = false;
             return;
         }
         if (DataStore.CURRENT_PRODUCT.getStockCount() < 1)
         {
-            btnAddToCart.setEnabled(false);
+            isStock = false;
         }else
         {
-            btnAddToCart.setEnabled(true);
+            isStock = true;
         }
     }
     @Deprecated
@@ -162,16 +162,23 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
 
     public void addProductToCart()
     {
+        checkButton();
         if (!mainActivity.isNetworkAvailable())
         {
             Toast.makeText(mainActivity, "No internet connection, check your connection and try again", Toast.LENGTH_LONG).show();
             return;
         }
+        if(isStock)
+        {
+            mainActivity.ACTION_BAR.setDisplayHomeAsUpEnabled(false);
+            mainActivity.loadingScreen(true);
+            //connect to webservice and add product to cart
+            mainActivity.getWebService().AddProductToCart(DataStore.HIRE_CURRENT_HIRE.getHireID(),DataStore.CURRENT_PRODUCT.getProductID());
+        }else
+        {
+            Toast.makeText(mainActivity,"No Stock Available",Toast.LENGTH_SHORT).show();
+        }
 
-        mainActivity.ACTION_BAR.setDisplayHomeAsUpEnabled(false);
-        mainActivity.loadingScreen(true);
-        //connect to webservice and add product to cart
-        mainActivity.getWebService().AddProductToCart(DataStore.HIRE_CURRENT_HIRE.getHireID(),DataStore.CURRENT_PRODUCT.getProductID());
 
     }
 }

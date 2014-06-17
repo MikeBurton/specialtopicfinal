@@ -101,8 +101,24 @@ public class ProductArrayAdapter extends ArrayAdapter<Product> {
                     View view = productView.getView();
                     if (view != null)
                     {
+                        int stock = updateProducts.getInt("StockCount");
                         TextView txtStockCount = (TextView) view.findViewById(R.id.item_txtStockCount);
-                        txtStockCount.setText(" "+updateProducts.getInt("StockCount")+" Available ");
+                        txtStockCount.setText(" "+stock+" Available ");
+                        //Update datastore
+                        for(Product product : DataStore.ARRAYLIST_CURRENT_PRODUCTS)
+                        {
+                            if (product.getProductID() == productID)
+                            {
+                                product.setStockCount(stock);
+                            }
+                            if(DataStore.CURRENT_PRODUCT.getProductID() == productID)
+                            {
+
+                                DataStore.CURRENT_PRODUCT.setStockCount(stock);
+                            }
+                            break;
+                        }
+
 
                     }
                 }
