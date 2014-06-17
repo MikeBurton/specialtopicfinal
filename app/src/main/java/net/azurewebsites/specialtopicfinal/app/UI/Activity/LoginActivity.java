@@ -100,12 +100,15 @@ public class LoginActivity extends Activity implements WebServiceEvents {
             }
         }
     };
-    /*
-    *Handles login
-    *Contracts webservice with a Request
-    *Uses WebService object
-    * */
-    public void sendLoginRequest(String user, String pass)
+
+    /**
+     * Handles login
+     *Contracts webservice with a Request
+     *Uses WebService object
+     * @param user username
+     * @param pass password
+     */
+     public void sendLoginRequest(String user, String pass)
     {
         if (!isNetworkAvailable())
         {
@@ -134,10 +137,10 @@ public class LoginActivity extends Activity implements WebServiceEvents {
 
 
     }
-    /*
+    /**
    * Receives webservice response
    * Contracts webservice
-   *
+   *@param response Response determines if login was successful
    * */
     public void loginResponse(String response)
     {
@@ -161,6 +164,10 @@ public class LoginActivity extends Activity implements WebServiceEvents {
 
         }
     }
+
+    /**
+     * Navigates to the MainActivity
+     */
     public void navMainActivity()
     {
         final Context context = this;
@@ -171,16 +178,29 @@ public class LoginActivity extends Activity implements WebServiceEvents {
 
 
     }
+
+    /**
+     * Displays error message if login request was unsuccessful
+     * @param message error message
+     */
     public void displayFailedLogin(String message)
     {
         txtError.setText(message);
 
     }
+
+    /**
+     * Navigates to the RegisterActivity
+     */
     public void navRegisterActivity(){
         final Context context = this;
         Intent intent = new Intent(context,RegisterActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Used to hide and show loading screen
+     */
     public  void loadingScreen()
     {
         if(content.getVisibility() == View.VISIBLE)
@@ -223,6 +243,11 @@ public class LoginActivity extends Activity implements WebServiceEvents {
     public void WebServiceEndRequest() {
 
     }
+
+    /**
+     * Check if an internet connection exists
+     * @return boolean
+     */
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

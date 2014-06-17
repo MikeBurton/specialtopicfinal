@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ public class UserFragment extends Fragment implements WebServiceEvents
     TextView txtName;
     TextView txtEmail;
     Button btnMyOrders;
+    ListView listView;
+    ProgressBar loading;
     public MainActivity getMainActivity() {
         return mainActivity;
     }
@@ -42,6 +45,7 @@ public class UserFragment extends Fragment implements WebServiceEvents
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_user,container,false);
     }
     @Override
@@ -53,6 +57,11 @@ public class UserFragment extends Fragment implements WebServiceEvents
         txtName = (TextView)  mainActivity.findViewById(R.id.txt_name_user);
         txtName.setText("Name: "+ DataStore.CURRENT_USER.getFirstName()+" "+DataStore.CURRENT_USER.getLastName());
         txtEmail.setText("Email: "+DataStore.CURRENT_USER.getUserName());
+        loading = (ProgressBar) mainActivity.findViewById(R.id.loading_user);
+        loading.setVisibility(View.INVISIBLE);
+        listView = (ListView) mainActivity.findViewById(R.id.listView);
+        listView.setAdapter(userArrayAdapter);
+        mainActivity.getWebService().getWEB_SERVICE_EVENT_MEMBERS().add(this);
     }
     /*
   * Button listener
@@ -63,8 +72,9 @@ public class UserFragment extends Fragment implements WebServiceEvents
         public void onClick(View btn) {
             switch (btn.getId()) {
                 case R.id.btn_hires_user :
-
-                    Toast.makeText(mainActivity,"Button Pressed",Toast.LENGTH_SHORT);
+                    loading.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.INVISIBLE);
+                    mainActivity.getWebService().getHiresByEmail(DataStore.CURRENT_USER_ID);
                     break;
             }
         }
@@ -78,6 +88,11 @@ public class UserFragment extends Fragment implements WebServiceEvents
     @Override
     public void WebServiceFinished(String METHOD_NAME, String WEB_SERVICE_RESULT) {
 
+            userArrayAdapter.notifyDataSetChanged();
+            listView.setAdapter(userArrayAdapter);
+            listView.invalidateViews();
+            loading.setVisibility(View.INVISIBLE);
+            listView.setVisibility(View.VISIBLE);
     }
 
     @Override

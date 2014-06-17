@@ -16,8 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Total Products Hired:"
-        android:id="@+id/txt_totalProducts_user"
+        android:text="Username:"
+        android:id="@+id/txt_userName_user"
         android:layout_below="@+id/txt_hireid_user"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="10dp"/>
@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Grand Total:"
-        android:id="@+id/txt_DailyRate_Cart"
-        android:layout_below="@+id/txt_totalProducts_user"
+        android:id="@+id/txt_grandtotal_user"
+        android:layout_below="@+id/txt_userName_user"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="10dp"/>
 

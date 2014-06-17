@@ -296,7 +296,51 @@ public class WebService {
         BUFFERED_READER_RESPONSE.close();
         return PRODUCT_BY_ID_RESULT;
     }
+    /**
+     * Get Hires by EMAIL
+     * @param EMAIL
+     * @return success! string
+     * @throws Exception
+     */
+    public String webHiresByEmail(String EMAIL) throws Exception
+    {
+        String HIRES_BY_EMAIL;
+        //encode WEB_SERVICE_ACCESS_KEY
+        String ENCODE_KEY_UTF8 = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
+        EMAIL = SafeSecurity.encrypt(EMAIL);
+        EMAIL = URLEncoder.encode(EMAIL, "UTF-8");
+        // add URL object
+        URL URL = new URL(WEB_SERVICE_URL + "/GetHiresByEmail?eemail=" + EMAIL + "&key=" + ENCODE_KEY_UTF8);
+        //open connection to web service
+        URLConnection URL_CONNECTION = URL.openConnection();
+        //read webservice response
+        BufferedReader BUFFERED_READER_RESPONSE = new BufferedReader(new InputStreamReader(URL_CONNECTION.getInputStream()));
+        //read WEBSERVICE_RESULT to string
+        String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
+        //create json object to store WEBSERVICE_RESULT
+        JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
+        //convert json object into json array
+        JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("GetHiresByEmailResult");
+        //loop through  array
+        DataStore.ARRAYLIST_CURRENT_HIRES.clear();
+        for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
+            JSONObject JSON_OBJECT_HIRE = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
+            JSONArray hireDetails = JSON_OBJECT_HIRE.getJSONArray("HireDetails");
+            int HIREID = 0;
+            for (int in = 0; in < hireDetails.length(); in++) {
+                JSONObject JSON_OBJECT_HIREDETAILS = (JSONObject) hireDetails.get(in);
+                HIREID = JSON_OBJECT_HIREDETAILS.getInt("HireID");
+            }
+            Hire HIRE = new Hire(HIREID,JSON_OBJECT_HIRE.getDouble("GrandTotal"), JSON_OBJECT_HIRE.getString("Email"));
+            DataStore.ARRAYLIST_CURRENT_HIRES.add(HIRE);
+        }
+        BUFFERED_READER_RESPONSE.close();
 
+
+        HIRES_BY_EMAIL = "!Success";
+        return HIRES_BY_EMAIL;
+
+    }
     /**
      * Get Products by SearchString
      * @param SEARCH_STRING
@@ -1017,6 +1061,48 @@ public class WebService {
 
     }
 
+    /**
+     * Creates a AsyncTask calls webCheckOut
+     * @param EMAIL
+     */
+    public void getHiresByEmail(final String EMAIL) {
+
+        if (WEB_SERVICE_EVENT == null) {
+            throw new NullPointerException();
+        }
+
+        CURRENT_ASYNC_TASK = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected void onPreExecute() {
+                contactWebServiceEventMembers(1, null, null, null);
+            }
+
+            ;
+
+            @Override
+            protected String doInBackground(Void... params) {
+                String result = "";
+
+                try {
+                    result = webHiresByEmail(EMAIL);
+                } catch (Exception ex) {
+                    return result;
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                WEB_SERVICE_EVENT.WebServiceEndRequest();
+                if (result != "") {
+                    contactWebServiceEventMembers(2, result, "HiresByEmail", null);
+                } else {
+                    contactWebServiceEventMembers(3, null, null, new Exception("HiresByEmail request failed!"));
+                }
+            }
+        }.execute();
+
+    }
 
 }
 

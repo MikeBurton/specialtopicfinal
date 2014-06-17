@@ -10,8 +10,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:id="@+id/iv_icon_user"
                 android:maxHeight="100dp"
                 android:maxWidth="100dp"
@@ -33,7 +33,7 @@
                 android:layout_below="@+id/iv_icon_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                 android:layout_below="@+id/txt_title_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"/>
 
             <TextView
@@ -56,31 +56,40 @@
                 android:layout_below="@+id/txt_name_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="  My Orders  "
+                android:text="  My Hires  "
                 android:id="@+id/btn_hires_user"
                 android:layout_below="@+id/txt_email_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/button_layout"
                 android:textColor="@color/button_text_layout"/>
 
             <ListView
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="260dp"
                 android:id="@+id/listView"
                 android:layout_below="@+id/btn_hires_user"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"/>
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/loading_user"
+                android:layout_alignTop="@+id/listView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="79dp" />
 
 
         </RelativeLayout>

@@ -11,6 +11,7 @@ import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Category;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Hire;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.User;
 import net.azurewebsites.specialtopicfinal.app.R;
+import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class UserArrayAdapter extends ArrayAdapter<Hire> {
 
     Activity myActivity;
     ArrayList<Hire> hires;
+
     public UserArrayAdapter(Activity activity, int resource, ArrayList<Hire> list) {
         super(activity, resource, list);
         this.myActivity = activity;
@@ -36,7 +38,14 @@ public class UserArrayAdapter extends ArrayAdapter<Hire> {
             itemView = myActivity.getLayoutInflater().inflate(R.layout.listview_item_user,parent,false);
 
         }
+        Hire currentHire = DataStore.ARRAYLIST_CURRENT_HIRES.get(position);
 
+        TextView txtUsername = (TextView) itemView.findViewById(R.id.txt_userName_user);
+        TextView txtGrandTotal = (TextView) itemView.findViewById(R.id.txt_grandtotal_user);;
+        TextView txtHireID = (TextView) itemView.findViewById(R.id.txt_hireid_user);
+        txtGrandTotal.setText("Grand Total: "+currentHire.getGrandTotal() );
+        txtHireID.setText("Hire ID: "+currentHire.getHireID());
+        txtUsername.setText("Username: "+currentHire.getEmail());
         return itemView;
     }
 }

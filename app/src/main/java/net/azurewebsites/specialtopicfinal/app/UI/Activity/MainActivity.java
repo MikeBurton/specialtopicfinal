@@ -224,6 +224,11 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
             }
         }
     };
+
+    /**
+     * Creates category fragment
+     * @param isBack used to see if the category fragment has been created before
+     */
     private void getCategoryFragment(boolean isBack)
     {
         CategoryArrayAdapter categoryArrayAdapter = new CategoryArrayAdapter(this,R.layout.listview_item_category,DataStore.ARRAYLIST_CURRENT_CATEGORIES);
@@ -256,7 +261,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
 
 
     }
-
+    @Deprecated
     private void navLogin()
     {
         final Context context = this;
@@ -264,6 +269,10 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         startActivity(intent);
         this.finish();
     }
+
+    /**
+     * Creates user fragment
+     */
     public void getUserFragment()
     {
         UserArrayAdapter userArrayAdapter = new UserArrayAdapter(this,R.layout.listview_item_user,DataStore.ARRAYLIST_CURRENT_HIRES);
@@ -281,6 +290,9 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 6;
     }
+    /**
+     * Creates Cart Description Fragment
+     */
     public void getCartDesFragment()
     {
         CartDesFragment cartDesFragment = new CartDesFragment();
@@ -295,6 +307,10 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 5;
     }
+
+    /**
+     * Creates Cart Fragment
+     */
     public void getCartFragment() {
         CartArrayAdapter cartArrayAdapter = new CartArrayAdapter(this, R.layout.listview_item_cart, DataStore.ARRAYLIST_CURRENT_CARTIEMS);
         CartFragment cartFragment = new CartFragment();
@@ -311,6 +327,9 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 4;
     }
+    /**
+     * Creates Product fragment
+     */
     public void getProductFragment()
     {
        PRODUCT_ARRAY_ADAPTER = new ProductArrayAdapter(this,R.layout.listview_item_product,DataStore.ARRAYLIST_CURRENT_PRODUCTS);
@@ -331,7 +350,9 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         //productFragment.setArrayAdapter(PRODUCT_ARRAY_ADAPTER);
 
     }
-
+    /**
+     * Creates Product Description fragment
+     */
     public void getProductDescriptionFragment()
     {
         ProductDesFragment productDesFragment = new ProductDesFragment();
@@ -348,6 +369,10 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         FRAGMENT_ID = 3;
         CURRENT_FRAGMENT_ID = 3;
     }
+    /**
+     * Gets categories from webservice (Uses webservice object)
+     * Checks if internet connect is available
+     */
     private void getCategories()
     {
         if (!isNetworkAvailable())
@@ -364,6 +389,11 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
             loadingScreen(false);
         }
     }
+    /**
+     * Gets Products from webservice (Uses webservice object)
+     * Checks if internet connect is available
+     * @param categoryID gets products by CategoryID
+     */
     public void getProducts(int categoryID) {
 
         if (!isNetworkAvailable())
@@ -381,6 +411,11 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         WEB_SERVICE.getProductsByCategoryID(DataStore.CURRENT_CATEGORY_ID);
 
     }
+
+    /**
+     * Hides and shows loading screen layout
+     * @param isVisible used to hide and show loading screen
+     */
     public void loadingScreen(boolean isVisible)
     {
         if(isVisible)
@@ -394,16 +429,29 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
 
         }
     }
+
+    /**
+     * Gets user details from webservice (uses webservice object)
+     */
     public void getUserDetails()
     {
         loadingScreen(true);
         //mainActivity.getWebService().getUserByEmail(DataStore.CURRENT_USER_ID);
         WEB_SERVICE.getUserByEmail(DataStore.CURRENT_USER_ID);
     }
+
+    /**
+     * Updates cart count on action bar
+     */
     public void updateCartCount()
     {
         invalidateOptionsMenu();
     }
+
+    /**
+     * Controls back navigation for both the software and hardware back buttons
+     * @return boolean used for software button method
+     */
     public boolean navBackFragments()
     {
         switch (FRAGMENT_ID)
@@ -456,12 +504,23 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents,S
         }
         return true;
     }
+
+    /**
+     * Check if an internet connection exists
+     * @return boolean
+     */
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    /**
+     * Updates PRODUCT_ARRAY_ADAPTER using json. This method is called if signalR returns a message from the productHub
+     * @param jsonResponse json string from signalR object
+     * @throws Exception
+     */
     public void updateStockCount(final String jsonResponse)throws Exception{
 
         if (PRODUCT_ARRAY_ADAPTER != null)

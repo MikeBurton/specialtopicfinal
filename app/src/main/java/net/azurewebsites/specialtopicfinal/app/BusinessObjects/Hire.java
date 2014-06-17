@@ -54,12 +54,23 @@ public class Hire {
         return user;
     }
 
+    public void setHireDetails(ArrayList<HireDetail> hireDetails) {
+        this.hireDetails = hireDetails;
+    }
+
     public ArrayList<HireDetail> getHireDetails() {
         return hireDetails;
     }
     public Hire(){}
     public Hire(int hireID,String email)
     {
+        this.hireID = hireID;
+        this.email = email;
+        if (hireDetails == null){hireDetails = new ArrayList<HireDetail>();}
+    }
+    public Hire(int hireID,double grandTotal,String email)
+    {
+        this.grandTotal = grandTotal;
         this.hireID = hireID;
         this.email = email;
         if (hireDetails == null){hireDetails = new ArrayList<HireDetail>();}
