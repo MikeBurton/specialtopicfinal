@@ -75,7 +75,7 @@ public class SignalR {
             public void onMessageReceived(JsonElement json) {
                 System.out.println("RAW received message: " + json.toString());
                 try {
-                    activity.upDateStock(json.toString());
+                    activity.updateStockCount(json.toString());
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
                 }

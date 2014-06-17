@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import net.azurewebsites.specialtopicfinal.app.R;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebService;
@@ -34,6 +32,7 @@ public class LoginActivity extends Activity implements WebServiceEvents {
     RelativeLayout main;
     ProgressBar loading;
     TextView txtLoadingMessage;
+    WebService webService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +74,19 @@ public class LoginActivity extends Activity implements WebServiceEvents {
         }
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onBackPressed() {
+        if(webService != null)
+        {
+            webService.getCurrentAsyncTask().cancel(true);
+        }
+
+        super.onBackPressed();
+    }
     /*
-   * Button listener
-   * Handles all the on click events for the login activity
-   * */
+  * Button listener
+  * Handles all the on click events for the login activity
+  * */
     Button.OnClickListener buttonAddOnClickListener  = new Button.OnClickListener(){
         @Override
         public void onClick(View btn) {
@@ -118,8 +126,8 @@ public class LoginActivity extends Activity implements WebServiceEvents {
             //save current username to data store
             DataStore.CURRENT_USER_ID = user;
             //call webservice
-            WebService wb = new WebService(this,6000,false);
-            wb.loginRequest(user,pass);
+            webService = new WebService(this,6000,false);
+            webService.loginRequest(user, pass);
             //start LOADING_PROGRESS_BAR screen
             loadingScreen();
         }

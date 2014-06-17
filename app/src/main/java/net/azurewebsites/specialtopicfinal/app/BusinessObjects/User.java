@@ -16,10 +16,31 @@ public class User
     String FirstName;
     String LastName;
     String Type;
-    String Email;
     String Phone;
     ArrayList<Address> addresses;
     ArrayList<Hire> hires;
+
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
+
+
+    public void setPhone(String phone) {
+        Phone = phone;
+    }
+
+    public void setType(String type) {
+        Type = type;
+    }
 
     public String getUserName() {
         return UserName;
@@ -41,9 +62,7 @@ public class User
         return Type;
     }
 
-    public String getEmail() {
-        return Email;
-    }
+
 
     public String getPhone() {
         return Phone;
@@ -65,14 +84,19 @@ public class User
         this.hires = hires;
     }
     public User(){}
-    public User(String userName, String password, String firstName, String lastName, String type, String email, String phone, ArrayList<Address> addresses, ArrayList<Hire> hires)
+    public User(String userName, String firstName, String lastName){
+        this.UserName = userName;
+        this.FirstName = firstName;
+        this.LastName = lastName;
+
+    }
+    public User(String userName, String password, String firstName, String lastName, String type, String phone, ArrayList<Address> addresses, ArrayList<Hire> hires)
     {
         this.UserName = userName;
         this.Password = password;
         this.FirstName = firstName;
         this.LastName = lastName;
         this.Type = type;
-        this.Email = email;
         this.Phone = phone;
         this.addresses = addresses;
         this.hires = hires;
@@ -86,7 +110,6 @@ public class User
                 ", FirstName='" + FirstName + '\'' +
                 ", LastName='" + LastName + '\'' +
                 ", Type='" + Type + '\'' +
-                ", Email='" + Email + '\'' +
                 ", Phone='" + Phone + '\'' +
                 ", addresses=" + addresses +
                 ", hires=" + hires +

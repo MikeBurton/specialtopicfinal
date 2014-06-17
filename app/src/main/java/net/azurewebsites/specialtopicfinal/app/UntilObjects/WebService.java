@@ -11,6 +11,7 @@ import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Hire;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.HireDetail;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Image;
 import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Product;
+import net.azurewebsites.specialtopicfinal.app.BusinessObjects.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -173,7 +174,9 @@ public class WebService {
         String RESPONSE_STRING = BUFFERED_READER_RESPONSE.readLine();
         //create connection object to store WEBSERVICE_RESULT
         JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
-
+        JSONObject JSON_OBJECT_RESULT = JSON_OBJECT_RESPONSE.getJSONObject("GetUserByEmailResult");
+        User user = new User(JSON_OBJECT_RESULT.getString("Email"),JSON_OBJECT_RESULT.getString("FirstName"),JSON_OBJECT_RESULT.getString("LastName"));
+        DataStore.CURRENT_USER = user;
         BUFFERED_READER_RESPONSE.close();
 
         USER_BY_EMAIL_RESULT = "Success!";
@@ -302,8 +305,10 @@ public class WebService {
      */
     private String webProductsBySearchString(String SEARCH_STRING) throws Exception {
         String PRODUCTS_BY_SEARCH_STRING_RESULT;
+        //encode WEB_SERVICE_ACCESS_KEY
+        String ECODE_URL = URLEncoder.encode(getWebServiceAccessCode(), "UTF-8");
         // add URL object
-        URL URL = new URL(WEB_SERVICE_URL + "/GetProductsBySearchString/" + "" + SEARCH_STRING);
+        URL URL = new URL(WEB_SERVICE_URL + "/GetProductsBySearchString/"+SEARCH_STRING+"?key="+ECODE_URL);
         //open connection to web service
         URLConnection URL_CONNECTION = URL.openConnection();
         //read webservice response
@@ -313,28 +318,46 @@ public class WebService {
         JSONObject JSON_OBJECT_RESPONSE = new JSONObject(RESPONSE_STRING);
         //convert JSON object into JSON array
         JSONArray JSON_ARRAY_RESPONSE = JSON_OBJECT_RESPONSE.getJSONArray("GetProductsBySearchStringResult");
+        //clear current products
+        DataStore.ARRAYLIST_CURRENT_PRODUCTS.clear();
         //loop through  array
         for (int i = 0; i < JSON_ARRAY_RESPONSE.length(); i++) {
-            JSONObject JSON_OBJECT = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
-            JSONArray JSON_ARRAY_IMAGES = JSON_OBJECT.getJSONArray("Images");
+            JSONObject JSON_OBJECT_PRODUCT = (JSONObject) JSON_ARRAY_RESPONSE.get(i);
+            JSONArray images = JSON_OBJECT_PRODUCT.getJSONArray("Images");
             ArrayList<Image> ARRAYLIST_IMAGES = new ArrayList<Image>();
-            for (int in = 0; in < JSON_ARRAY_IMAGES.length(); in++) {
-                JSONObject JSON_OBJECT_IMAGE = (JSONObject) JSON_ARRAY_IMAGES.get(in);
+            for (int in = 0; in < images.length(); in++) {
+                JSONObject JSON_OBJECT_IMAGE = (JSONObject) images.get(in);
                 Image IMAGE = new Image(JSON_OBJECT_IMAGE.getString("ImageID"), JSON_OBJECT_IMAGE.getBoolean("IsDefault"), JSON_OBJECT_IMAGE.getInt("ProductID"));
                 ARRAYLIST_IMAGES.add(IMAGE);
             }
             int PARENT_PRODUCT_ID;
-            if (JSON_OBJECT.isNull("ParentProductID") == true) {
+            if (JSON_OBJECT_PRODUCT.isNull("ParentProductID") == true) {
                 PARENT_PRODUCT_ID = 0;
             } else {
-                PARENT_PRODUCT_ID = JSON_OBJECT.getInt("ParentProductID");
+                PARENT_PRODUCT_ID = JSON_OBJECT_PRODUCT.getInt("ParentProductID");
             }
 
-            Product PRODUCT = new Product(JSON_OBJECT.getInt("ProductID"), JSON_OBJECT.getInt("CategoryID"), JSON_OBJECT.getString("Description"), JSON_OBJECT.getBoolean("IsCurrent"), JSON_OBJECT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT.getDouble("Price"), JSON_OBJECT.getInt("StockCount"), ARRAYLIST_IMAGES);
+            Product PRODUCT = new Product(JSON_OBJECT_PRODUCT.getInt("ProductID"), JSON_OBJECT_PRODUCT.getInt("CategoryID"), JSON_OBJECT_PRODUCT.getString("Description"), JSON_OBJECT_PRODUCT.getBoolean("IsCurrent"), JSON_OBJECT_PRODUCT.getString("Name"), PARENT_PRODUCT_ID, JSON_OBJECT_PRODUCT.getDouble("Price"), JSON_OBJECT_PRODUCT.getInt("StockCount"), ARRAYLIST_IMAGES);
+            Image IMAGE_MAIN = new Image();
+            for (Image IMAGE : PRODUCT.getImages()) {
+                if (IMAGE.isDefault()) {
+                    IMAGE_MAIN = IMAGE;
+                }
+
+            }
+            if (IMAGE_MAIN.getImageID().length() > 0) {
+                URL URL_IMAGES = new URL("http://samshire.azurewebsites.net/Images/" + IMAGE_MAIN.getImageID());
+                Bitmap BITMAP_IMAGE;
+                BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
+                PRODUCT.setImage(Bitmap.createScaledBitmap(BITMAP_IMAGE,120,120,false));
+            }
             DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
         }
         PRODUCTS_BY_SEARCH_STRING_RESULT = "Success!";
         BUFFERED_READER_RESPONSE.close();
+
         return PRODUCTS_BY_SEARCH_STRING_RESULT;
     }
 
@@ -393,7 +416,8 @@ public class WebService {
                 BITMAP_IMAGE = BitmapFactory.decodeStream(URL_IMAGES.openConnection().getInputStream());
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 BITMAP_IMAGE.compress(Bitmap.CompressFormat.JPEG, 0, out);
-                PRODUCT.setImage(BITMAP_IMAGE);
+
+                PRODUCT.setImage(Bitmap.createScaledBitmap(BITMAP_IMAGE,120,120,false));
             }
             DataStore.ARRAYLIST_CURRENT_PRODUCTS.add(PRODUCT);
         }

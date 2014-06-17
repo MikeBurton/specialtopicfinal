@@ -63,7 +63,7 @@ public class CartFragment extends Fragment implements  AdapterView.OnItemClickLi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mainActivity.getWEB_SERVICE().getWEB_SERVICE_EVENT_MEMBERS().add(this);
+        mainActivity.getWebService().getWEB_SERVICE_EVENT_MEMBERS().add(this);
         cart = (ListView) mainActivity.findViewById(R.id.lvCart);
         checkout = (Button) mainActivity.findViewById(R.id.btnCheckOut);
         grandTotal = (TextView)mainActivity.findViewById(R.id.txt_GrandTotal);
@@ -121,7 +121,7 @@ public class CartFragment extends Fragment implements  AdapterView.OnItemClickLi
         }else
         {
             mainActivity.loadingScreen(true);
-            mainActivity.getWEB_SERVICE().checkOut(DataStore.HIRE_CURRENT_HIRE.getHireID());
+            mainActivity.getWebService().checkOut(DataStore.HIRE_CURRENT_HIRE.getHireID());
 
         }
 

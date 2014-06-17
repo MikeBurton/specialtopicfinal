@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.azurewebsites.specialtopicfinal.app.R;
 import net.azurewebsites.specialtopicfinal.app.UI.Activity.MainActivity;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.UserArrayAdapter;
+import net.azurewebsites.specialtopicfinal.app.UntilObjects.DataStore;
+import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebService;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebServiceEvents;
 
 /**
@@ -22,6 +25,9 @@ public class UserFragment extends Fragment implements WebServiceEvents
 {
     MainActivity mainActivity;
     UserArrayAdapter userArrayAdapter;
+    TextView txtName;
+    TextView txtEmail;
+    Button btnMyOrders;
     public MainActivity getMainActivity() {
         return mainActivity;
     }
@@ -41,7 +47,12 @@ public class UserFragment extends Fragment implements WebServiceEvents
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        btnMyOrders = (Button) mainActivity.findViewById(R.id.btn_hires_user);
+        btnMyOrders.setOnClickListener(buttonAddOnClickListener);
+        txtEmail = (TextView)  mainActivity.findViewById(R.id.txt_email_user);
+        txtName = (TextView)  mainActivity.findViewById(R.id.txt_name_user);
+        txtName.setText("Name: "+ DataStore.CURRENT_USER.getFirstName()+" "+DataStore.CURRENT_USER.getLastName());
+        txtEmail.setText("Email: "+DataStore.CURRENT_USER.getUserName());
     }
     /*
   * Button listener
@@ -50,9 +61,15 @@ public class UserFragment extends Fragment implements WebServiceEvents
     Button.OnClickListener buttonAddOnClickListener  = new Button.OnClickListener(){
         @Override
         public void onClick(View btn) {
+            switch (btn.getId()) {
+                case R.id.btn_hires_user :
 
+                    Toast.makeText(mainActivity,"Button Pressed",Toast.LENGTH_SHORT);
+                    break;
+            }
         }
     };
+
     @Override
     public void WebServiceStartedRequest() {
 

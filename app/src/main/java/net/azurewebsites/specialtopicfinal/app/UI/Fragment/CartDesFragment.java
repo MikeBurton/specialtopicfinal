@@ -50,7 +50,7 @@ public class CartDesFragment extends Fragment implements WebServiceEvents
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mainActivity.getWEB_SERVICE().getWEB_SERVICE_EVENT_MEMBERS().add(this);
+        mainActivity.getWebService().getWEB_SERVICE_EVENT_MEMBERS().add(this);
         txtProductName = (TextView)mainActivity.findViewById(R.id.txt_ProductName_CartDes);
         txtProductAmount = (TextView)mainActivity.findViewById(R.id.txt_Amount_CartDes);
         txtDailyRate = (TextView)mainActivity.findViewById(R.id.txt_DailyRate_CartDes);
@@ -115,7 +115,7 @@ public class CartDesFragment extends Fragment implements WebServiceEvents
         Date today = new Date(date.getTime());
         DataStore.CARTITEM_CURRENT.setEndDate(today);
 
-        mainActivity.getWEB_SERVICE().changeHireDetailEndDate(DataStore.CARTITEM_CURRENT.getHireDetailID(), DataStore.CARTITEM_CURRENT.getEndDate());
+        mainActivity.getWebService().changeHireDetailEndDate(DataStore.CARTITEM_CURRENT.getHireDetailID(), DataStore.CARTITEM_CURRENT.getEndDate());
     }
     public void removeItem()
     {
@@ -126,7 +126,7 @@ public class CartDesFragment extends Fragment implements WebServiceEvents
         }
         mainActivity.loadingScreen(true);
 
-        mainActivity.getWEB_SERVICE().removeProductFromCart(DataStore.CARTITEM_CURRENT.getHireDetailID());
+        mainActivity.getWebService().removeProductFromCart(DataStore.CARTITEM_CURRENT.getHireDetailID());
     }
     @Override
     public void WebServiceStartedRequest() {

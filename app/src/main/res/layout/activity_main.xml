@@ -5,12 +5,19 @@
     android:layout_height="match_parent"
     tools:context="com.example.samshire.app.UI.Activity.MainActivity"
     tools:ignore="MergeRootFrame" >
+    <SearchView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchView"
+        android:layout_gravity="left|top"
+        android:background="@android:color/white"
 
+        />
     <FrameLayout
         android:id="@+id/listContainer"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="left|top">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
 
     </FrameLayout>
     <FrameLayout
@@ -24,5 +31,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/loading"
             android:layout_gravity="center" />
+
+
     </FrameLayout>
 </FrameLayout>

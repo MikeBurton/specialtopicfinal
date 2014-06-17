@@ -49,7 +49,7 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mainActivity.getWEB_SERVICE().getWEB_SERVICE_EVENT_MEMBERS().add(this);
+        mainActivity.getWebService().getWEB_SERVICE_EVENT_MEMBERS().add(this);
         TextView txtProductName = (TextView) mainActivity.findViewById(R.id.proDes_txtProductName);
         TextView txtProductPrice = (TextView) mainActivity.findViewById(R.id.proDes_txtProductPrice);
         txtProductStock = (TextView) mainActivity.findViewById(R.id.proDes_txtProductStock);
@@ -169,7 +169,7 @@ public class ProductDesFragment extends Fragment implements WebServiceEvents {
         mainActivity.ACTION_BAR.setDisplayHomeAsUpEnabled(false);
         mainActivity.loadingScreen(true);
         //connect to webservice and add product to cart
-        mainActivity.getWEB_SERVICE().AddProductToCart(DataStore.HIRE_CURRENT_HIRE.getHireID(),DataStore.CURRENT_PRODUCT.getProductID());
+        mainActivity.getWebService().AddProductToCart(DataStore.HIRE_CURRENT_HIRE.getHireID(),DataStore.CURRENT_PRODUCT.getProductID());
 
     }
 }

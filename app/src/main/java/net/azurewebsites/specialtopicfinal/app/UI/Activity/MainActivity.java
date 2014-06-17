@@ -7,15 +7,19 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.view.KeyEvent;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
+import net.azurewebsites.specialtopicfinal.app.BusinessObjects.Product;
 import net.azurewebsites.specialtopicfinal.app.R;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.CartArrayAdapter;
 import net.azurewebsites.specialtopicfinal.app.UI.ArrayAdapter.CategoryArrayAdapter;
@@ -33,27 +37,24 @@ import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebService;
 import net.azurewebsites.specialtopicfinal.app.UntilObjects.WebServiceEvents;
 
 
-public class MainActivity extends FragmentActivity implements WebServiceEvents {
+public class MainActivity extends FragmentActivity implements WebServiceEvents,SearchView.OnQueryTextListener {
     View ACTION_BAR_VIEW;
     Button BTN_ACTION_BAR_CART;
     Button BTN_ACTION_BAR_USER;
     FrameLayout LIST_FRAME_LAYOUT;
     FrameLayout LOADING_FRAME_LAYOUT;
     ProgressBar LOADING_PROGRESS_BAR;
-    Bundle SAVED_STATE;
     public ActionBar ACTION_BAR;
     WebService WEB_SERVICE;
     ProductArrayAdapter PRODUCT_ARRAY_ADAPTER;
-
     int FRAGMENT_ID = 0;
     int CURRENT_FRAGMENT_ID = 1;
     SignalR SIGNALR_CONNECTION;
+    SearchView searchView;
+    private static int BACK_TIME_OUT = 100;
 
-    public ProductArrayAdapter getPRODUCT_ARRAY_ADAPTER() {
-        return PRODUCT_ARRAY_ADAPTER;
-    }
 
-    public WebService getWEB_SERVICE() {
+    public WebService getWebService() {
         return WEB_SERVICE;
     }
 
@@ -62,7 +63,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.SAVED_STATE = savedInstanceState;
+
         //clear categories
         DataStore.ARRAYLIST_CURRENT_CATEGORIES.clear();
         //add fragment to main activity container
@@ -71,14 +72,19 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
         LIST_FRAME_LAYOUT = (FrameLayout) findViewById(R.id.listContainer);
         LOADING_FRAME_LAYOUT = (FrameLayout) findViewById(R.id.loadingContainer);
         ACTION_BAR = getActionBar();
+        searchView = (SearchView) findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(this);
+
+
         loadingScreen(true);
+
         getCategories();
         SIGNALR_CONNECTION = new SignalR(this);
         try{
             SIGNALR_CONNECTION.signalRConnection();
         }catch (Exception ex)
         {
-            Toast.makeText(MainActivity.this,ex.toString(),Toast.LENGTH_LONG);
+            //Toast.makeText(MainActivity.this,ex.toString(),Toast.LENGTH_LONG).show();
         }
     }
 
@@ -118,28 +124,47 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
 
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onBackPressed() {
+
+    if (WEB_SERVICE != null){
+        WEB_SERVICE.getCurrentAsyncTask().cancel(true);
+        System.out.println("ASYNCTASK HAS STOPPED: " + WEB_SERVICE.getCurrentAsyncTask().isCancelled());
+
+    }
+
+
+        new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Delay the back button by 100ms
+             * to make sure AsyncTask has stoped
+             * TODO:This Code needs to be removed
+             */
+
+            @Override
+            public void run() {
+
+                navBackFragments();
+            }
+        }, BACK_TIME_OUT);
+        loadingScreen(false);
+
+    }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+    public boolean onQueryTextSubmit(String s) {
+        loadingScreen(true);
+        WEB_SERVICE.getProductsBySearchString(s);
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+        return false;
+    }
 
-          WEB_SERVICE.getCurrentAsyncTask().cancel(true);
-          System.out.println("ASYNCTASK HAS STOPPED: " + WEB_SERVICE.getCurrentAsyncTask().isCancelled());
-          loadingScreen(false);
-          if (CURRENT_FRAGMENT_ID == 1)
-          {
-              final Context context = this;
-              Intent intent = new Intent(context,LoginActivity.class);
-              startActivity(intent);
-              this.finish();
-
-          }else
-          {
-              navBackFragments();
-          }
-
-        }
-        return super.onKeyDown(keyCode, event);
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 
     @Override
@@ -151,12 +176,16 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     public void WebServiceFinished(String METHOD_NAME, String WEB_SERVICE_RESULT) {
         if(METHOD_NAME == "GetCategories")
         {
+            getUserDetails();
             getCategoryFragment(false);
-            loadingScreen(false);
+
         }else if(METHOD_NAME == "ProductsByCategoryID")
         {
             getProductFragment();
-            loadingScreen(false);
+
+        }else if (METHOD_NAME == "ProductsBySearchString")
+        {
+            getProductFragment();
         }
     }
 
@@ -175,6 +204,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     public void WebServiceImages(Bitmap WEB_SERVICE_IMAGE, String METHOD_NAME) {
 
     }
+
 
     /*
           * Button listener
@@ -197,39 +227,49 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     private void getCategoryFragment(boolean isBack)
     {
         CategoryArrayAdapter categoryArrayAdapter = new CategoryArrayAdapter(this,R.layout.listview_item_category,DataStore.ARRAYLIST_CURRENT_CATEGORIES);
-        CategoryFragment fg =  new CategoryFragment();
-        if (this.SAVED_STATE == null) {
+        CategoryFragment categoryFragment =  new CategoryFragment();
+
             if (isBack)
             {
-                fg.setMainActivity(this);
-                fg.setArrayAdapter(categoryArrayAdapter);
+                categoryFragment.setMainActivity(this);
+                categoryFragment.setArrayAdapter(categoryArrayAdapter);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.listContainer, fg)
+                        .replace(R.id.listContainer, categoryFragment)
                                 // Add this transaction to the back stack
                         .addToBackStack(null)
                         .commit();
             }else
             {
-                fg.setMainActivity(this);
-                fg.setArrayAdapter(categoryArrayAdapter);
+                categoryFragment.setMainActivity(this);
+                categoryFragment.setArrayAdapter(categoryArrayAdapter);
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.listContainer,fg)
+                        .add(R.id.listContainer,categoryFragment)
                                 // Add this transaction to the back stack
                         .addToBackStack(null)
                         .commit();
             }
-        }
+
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(false);
         FRAGMENT_ID = 1;
         CURRENT_FRAGMENT_ID =1;
+
+
     }
 
+    private void navLogin()
+    {
+        final Context context = this;
+        Intent intent = new Intent(context,LoginActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
     public void getUserFragment()
     {
         UserArrayAdapter userArrayAdapter = new UserArrayAdapter(this,R.layout.listview_item_user,DataStore.ARRAYLIST_CURRENT_HIRES);
         UserFragment userFragment = new UserFragment();
 
-        if (this.SAVED_STATE == null) {
+
             userFragment.setMainActivity(this);
             userFragment.setUserArrayAdapter(userArrayAdapter);
             getSupportFragmentManager().beginTransaction()
@@ -237,7 +277,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
                             // Add this transaction to the back stack
                     .addToBackStack(null)
                     .commit();
-        }
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 6;
     }
@@ -245,30 +285,29 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     {
         CartDesFragment cartDesFragment = new CartDesFragment();
         cartDesFragment.setActivity(this);
-        if (this.SAVED_STATE == null) {
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.listContainer, cartDesFragment)
                             // Add this transaction to the back stack
                     .addToBackStack(null)
                     .commit();
-        }
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 5;
     }
-    public void getCartFragment()
-    {
-        CartArrayAdapter cartArrayAdapter = new CartArrayAdapter(this,R.layout.listview_item_cart,DataStore.ARRAYLIST_CURRENT_CARTIEMS);
+    public void getCartFragment() {
+        CartArrayAdapter cartArrayAdapter = new CartArrayAdapter(this, R.layout.listview_item_cart, DataStore.ARRAYLIST_CURRENT_CARTIEMS);
         CartFragment cartFragment = new CartFragment();
-        if (this.SAVED_STATE == null) {
 
-            cartFragment.setArrayAdapter(cartArrayAdapter);
-            cartFragment.setActivity(this);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.listContainer, cartFragment)
-                            // Add this transaction to the back stack
-                    .addToBackStack(null)
-                    .commit();
-        }
+
+        cartFragment.setArrayAdapter(cartArrayAdapter);
+        cartFragment.setActivity(this);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.listContainer, cartFragment)
+                        // Add this transaction to the back stack
+                .addToBackStack(null)
+                .commit();
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 4;
     }
@@ -276,7 +315,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     {
        PRODUCT_ARRAY_ADAPTER = new ProductArrayAdapter(this,R.layout.listview_item_product,DataStore.ARRAYLIST_CURRENT_PRODUCTS);
           ProductFragment  productFragment = new ProductFragment();
-        if (this.SAVED_STATE == null) {
+
 
                 productFragment.setArrayAdapter(PRODUCT_ARRAY_ADAPTER);
                 productFragment.setActivity(this);
@@ -285,7 +324,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
                                 // Add this transaction to the back stack
                         .addToBackStack(null)
                         .commit();
-        }
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 2;
         CURRENT_FRAGMENT_ID = 2;
@@ -296,7 +335,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
     public void getProductDescriptionFragment()
     {
         ProductDesFragment productDesFragment = new ProductDesFragment();
-        if (this.SAVED_STATE == null) {
+
             productDesFragment.setMainActivity(this);
 
             getSupportFragmentManager().beginTransaction()
@@ -304,7 +343,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
                             // Add this transaction to the back stack
                     .addToBackStack(null)
                     .commit();
-        }
+
         ACTION_BAR.setDisplayHomeAsUpEnabled(true);
         FRAGMENT_ID = 3;
         CURRENT_FRAGMENT_ID = 3;
@@ -332,25 +371,15 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
             Toast.makeText(MainActivity.this, "No internet connection, check your connection and try again", Toast.LENGTH_LONG).show();
             return;
         }
+        DataStore.ARRAYLIST_CURRENT_PRODUCTS.clear();
+        DataStore.CURRENT_PRODUCT = new Product();
+
         FRAGMENT_ID = 2;
         CURRENT_FRAGMENT_ID = 2;
-        if (categoryID == DataStore.CURRENT_CATEGORY_ID)
-        {
-            if (DataStore.ARRAYLIST_CURRENT_PRODUCTS.isEmpty())
-            {
-                loadingScreen(true);
-                WEB_SERVICE.getProductsByCategoryID(DataStore.CURRENT_CATEGORY_ID);
+        loadingScreen(true);
+        DataStore.CURRENT_CATEGORY_ID = categoryID;
+        WEB_SERVICE.getProductsByCategoryID(DataStore.CURRENT_CATEGORY_ID);
 
-            }else
-            {
-                getProductFragment();
-            }
-        }else
-        {
-            loadingScreen(true);
-            DataStore.CURRENT_CATEGORY_ID = categoryID;
-            WEB_SERVICE.getProductsByCategoryID(DataStore.CURRENT_CATEGORY_ID);
-        }
     }
     public void loadingScreen(boolean isVisible)
     {
@@ -365,6 +394,12 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
 
         }
     }
+    public void getUserDetails()
+    {
+        loadingScreen(true);
+        //mainActivity.getWebService().getUserByEmail(DataStore.CURRENT_USER_ID);
+        WEB_SERVICE.getUserByEmail(DataStore.CURRENT_USER_ID);
+    }
     public void updateCartCount()
     {
         invalidateOptionsMenu();
@@ -374,6 +409,11 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
         switch (FRAGMENT_ID)
         {
             case 1:
+                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                final Context context = this;
+                Intent intent = new Intent(context,LoginActivity.class);
+                startActivity(intent);
+                this.finish();
 
                 return true;
             case 2:
@@ -422,7 +462,7 @@ public class MainActivity extends FragmentActivity implements WebServiceEvents {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    public void upDateStock(final String jsonResponse)throws Exception{
+    public void updateStockCount(final String jsonResponse)throws Exception{
 
         if (PRODUCT_ARRAY_ADAPTER != null)
         {
